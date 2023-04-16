@@ -29,7 +29,7 @@ class OntologyEmbedding(nn.Module):
 
         # construct model
         assert in_channels == heads * out_channels
-        self.g = GATConv(in_channels=in_channels,
+        self.g = GATv2Conv(in_channels=in_channels,
                          out_channels=out_channels,
                          heads=heads)
 
@@ -139,12 +139,13 @@ class MessagePassing(nn.Module):
         return aggr_out
 
 
-class GATConv(MessagePassing):
-    r"""The graph attentional operator from the `"Graph Attention Networks"
-    <https://arxiv.org/abs/1710.10903>`_ paper
+class GATv2Conv(MessagePassing):
+    r"""The graph attentional operator from the `"HOW ATTENTIVE ARE GRAPH 
+    ATTENTION NETWORKS?"
+    <https://arxiv.org/pdf/2105.14491.pdf>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{j} +
+        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
         \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
@@ -152,12 +153,12 @@ class GATConv(MessagePassing):
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
-        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_j]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
+        [\mathbf{x}_i \, \Vert \, \mathbf{x}_j]
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
-        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_k]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
+        [\mathbf{x}_i \, \Vert \, \mathbf{x}_k]
         \right)\right)}.
 
     Args:
@@ -184,7 +185,7 @@ class GATConv(MessagePassing):
                  negative_slope=0.2,
                  dropout=0,
                  bias=True):
-        super(GATConv, self).__init__()
+        super(GATv2Conv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -219,9 +220,16 @@ class GATConv(MessagePassing):
 
     def message(self, x_i, x_j, edge_index, num_nodes):
         # Compute attention coefficients.
-        alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
+        # alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
+        # alpha = F.leaky_relu(alpha, self.negative_slope)
+        # alpha = softmax(alpha, edge_index[0], num_nodes)
+
+        # GATv2 Implementation -- START
+        alpha = torch.cat([x_i, x_j], dim=-1)
         alpha = F.leaky_relu(alpha, self.negative_slope)
+        alpha = (alpha * self.att).sum(dim=-1)
         alpha = softmax(alpha, edge_index[0], num_nodes)
+        # GATv2 Implementation -- END
 
         alpha = F.dropout(alpha, p=self.dropout)
 
