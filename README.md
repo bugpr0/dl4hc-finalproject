@@ -8,6 +8,16 @@ G-Bert combined the power of **G**raph Neural Networks and **BERT** (Bidirection
 - pytorch>=0.4
 - python>=3.5
 - torch_geometric==1.0.3
+- numpy
+- tqdm
+- dill
+- tensorboardX
+- sklearn
+- scikit-learn
+- scipy
+- torch_scatter==1.3.0
+- torch_sparse==0.2.1
+- torch_cluster
 
 ## Guide
 We list the structure of this repo as follows:
@@ -52,11 +62,18 @@ We have released the preprocessing codes named data/EDA.ipynb to process data us
 To validate the performance of G-Bert, you can run the following script since we have provided the trained model binary file and well-preprocessed data.
 ```bash
 cd code/
-python run_gbert.py --model_name GBert-predict --use_pretrain --pretrain_dir ../saved/GBert-predict --graph
+# G-Bert Model using pretrained model and graph
+python run_gbert.py --model_name GBert-predict-n --use_pretrain --pretrain_dir ../saved/GBert-pretraining --num_train_epochs 5 --do_train --do_test --graph
+# G-Bert Model without using pretrained model and graph
+python run_gbert.py --model_name GBert-predict-p-g-n --num_train_epochs 5 --do_train --do_test
+# G-Bert Model without using pretrained model but using graph
+python run_gbert.py --model_name GBert-predict-p-n --num_train_epochs 5 --do_train --do_test --graph
+# G-Bert Model using pretrained model and not using graph
+python run_gbert.py --model_name GBert-predict-g-n --use_pretrain --pretrain_dir ../saved/GBert-predict --num_train_epochs 5 --do_train --do_test
 ```
 ## Cite 
 
-Please cite our paper if you find this code helpful:
+Original paper citiation:
 
 ```
 @article{shang2019pre,
@@ -66,6 +83,20 @@ Please cite our paper if you find this code helpful:
   year={2019}
 }
 ```
+
+GATv2 paper:
+```
+@inproceedings{
+  brody2022how,
+  title={How Attentive are Graph Attention Networks? },
+  author={Shaked Brody and Uri Alon and Eran Yahav},
+  booktitle={International Conference on Learning Representations},
+  year={2022},
+  url={https://openreview.net/forum?id=F72ximsx7C1}
+}
+```
+Link to original paper repo:
+- [G-Bert](https://github.com/jshang123/G-Bert)
 
 ## Acknowledgement
 Many thanks to the open source repositories and libraries to speed up our coding progress.
