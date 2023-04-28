@@ -1,10 +1,16 @@
 # G-Bert
 Pre-training of Graph Augmented Transformers for Medication Recommendation
 
-## Intro
-G-Bert combined the power of **G**raph Neural Networks and **BERT** (Bidirectional Encoder Representations from Transformers) for medical code representation and medication recommendation. We use the graph neural networks (GNNs) to represent the structure information of medical codes from a medical ontology. Then we integrate the GNN representation into a transformer-based visit encoder and pre-train it on single-visit EHR data. The pre-trained visit encoder and representation can be fine-tuned for downstream medical prediction tasks. Our model is the first to bring the language model pre-training schema into the healthcare domain and it achieved state-of-the-art performance on the medication recommendation task.
+## Introduction
+We have chosen “Pre-training of Graph Augmented Transformers for Medical Recommendation” paper, authored by Junyuan Shang, Tengfei Ma, Cao Xiao and Jimeng Sun, for our final project. The authors propose G-BERT graph learning model for medication recommendation. 
+
+The advances in Deep Learning technologies, availability of resources and data have provided great opportunities in the field of medical recommendation. The authors argue that existing medication recommendation models often learn the resentations from the longitudinal EHR data from a small number of patients with multiple visits, ignoring patients with single visit (selection bias) and ignore the complex hierarchical relationships among diagnosis, medications, symptoms, and diseases (lack of hierarchical knowledge), which can lead to suboptimal recommendations. To address these issues and enhance the prediction and interpretability, they propose G-BERT graph learning model. The proposed model leverages medical knowledge encoded in large-scale medical corpora and single visit patient information to pre-train the GAT model to learn the underlying structure of medical concepts and relationships. The purpose of pre-training is mainly to leverage patient record with single visit and provide model trainings with good initializations.
+
+The pre-trained GAT model is then fine-tuned on patient medical records with multiple visits, to personalize the medication recommendation for each patient. The model can capture not only the direct relationships between medications and symptoms but also the indirect relationships between medications through shared diseases or symptoms. As part of this course project work, we would like to reproduce the results which were published by the above mentioned authors in their original paper.
 
 ## Requirements
+Below mentioned libraries are required to train and fine-tune G-Bert.
+
 - pytorch>=0.4
 - python>=3.5
 - torch_geometric==1.0.3
