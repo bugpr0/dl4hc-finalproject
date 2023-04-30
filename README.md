@@ -9,7 +9,7 @@ The advances in Deep Learning technologies, availability of resources and data h
 The pre-trained GAT model is then fine-tuned on patient medical records with multiple visits, to personalize the medication recommendation for each patient. The model can capture not only the direct relationships between medications and symptoms but also the indirect relationships between medications through shared diseases or symptoms. As part of this course project work, we would like to reproduce the results which were published by the above mentioned authors in their original paper.
 
 ## Requirements
-Below mentioned libraries are required to train and fine-tune G-Bert.
+Below mentioned libraries are required to pre-train and fine-tune G-Bert.
 
 - pytorch>=0.4
 - python>=3.5
@@ -18,7 +18,6 @@ Below mentioned libraries are required to train and fine-tune G-Bert.
 - tqdm
 - dill
 - tensorboardX
-- sklearn
 - scikit-learn
 - scipy
 - torch_scatter==1.3.0
@@ -61,10 +60,11 @@ We list the structure of this repo as follows:
         ├── [ 371]  bert_config.json 
         └── [ 12M]  pytorch_model.bin
 ```
-### Preprocessing Data
-We have released the preprocessing codes named data/EDA.ipynb to process data using raw files from MIMIC-III dataset. You can download data files from [MIMIC](https://mimic.physionet.org/gettingstarted/dbsetup/) and get necessary mapping files from [GAMENet](https://github.com/sjy1203/GAMENet).
+## Dataset Description
+For pre-training and fine-tuning G-Bert, we are using the MIMIC-III synthetic data (pre-processed pickle files) made available in the git
+repository [G-Bert Repo](https://github.com/jshang123/G-Bert). The statistics of the data is provided in the original paper [G-Bert](https://arxiv.org/pdf/1906.00346.pdf).
 
-### Quick Test
+## Quick Test
 To validate the performance of G-Bert, you can run the following script since we have provided the trained model binary file and well-preprocessed data.
 ```bash
 cd code/
@@ -77,9 +77,11 @@ python run_gbert.py --model_name GBert-predict-p-n --num_train_epochs 5 --do_tra
 # G-Bert Model using pretrained model and not using graph
 python run_gbert.py --model_name GBert-predict-g-n --use_pretrain --pretrain_dir ../saved/GBert-predict --num_train_epochs 5 --do_train --do_test
 ```
-## Cite 
+## Result Comparison
 
-Original paper citiation:
+## Citation 
+
+Original paper:
 
 ```
 @article{shang2019pre,
@@ -102,7 +104,7 @@ GATv2 paper:
 }
 ```
 Link to original paper repo:
-- [G-Bert](https://github.com/jshang123/G-Bert)
+- [G-Bert Repo](https://github.com/jshang123/G-Bert)
 
 ## Acknowledgement
 Many thanks to the open source repositories and libraries to speed up our coding progress.
