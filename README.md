@@ -28,37 +28,38 @@ Below mentioned libraries are required to pre-train and fine-tune G-Bert.
 We list the structure of this repo as follows:
 ```latex
 .
-├── [4.0K]  code/
-│   ├── [ 13K]  bert_models.py % transformer models
-│   ├── [5.9K]  build_tree.py % build ontology
-│   ├── [4.3K]  config.py % hyperparameters for G-Bert
-│   ├── [ 11K]  graph_models.py % GAT models
-│   ├── [   0]  __init__.py
-│   ├── [9.8K]  predictive_models.py % G-Bert models
-│   ├── [ 721]  run_alternative.sh % script to train G-Bert
-│   ├── [ 19K]  run_gbert.py % fine tune G-Bert
-│   ├── [ 19K]  run_gbert_side.py
-│   ├── [ 18K]  run_pretraining.py % pre-train G-Bert
-│   ├── [4.4K]  run_tsne.py # output % save embedding for tsne visualization
-│   └── [4.7K]  utils.py
-├── [4.0K]  data/
-│   ├── [4.9M]  data-multi-side.pkl 
-│   ├── [3.6M]  data-multi-visit.pkl % patients data with multi-visit
-│   ├── [4.3M]  data-single-visit.pkl % patients data with singe-visit
-│   ├── [ 11K]  dx-vocab-multi.txt % diagnosis codes vocabulary in multi-visit data
-│   ├── [ 11K]  dx-vocab.txt % diagnosis codes vocabulary in all data
-│   ├── [ 29K]  EDA.ipynb % jupyter version to preprocess data
-│   ├── [ 18K]  EDA.py % python version to preprocess data
-│   ├── [6.2K]  eval-id.txt % validation data ids
-│   ├── [6.9K]  px-vocab-multi.txt % procedure codes vocabulary in multi-visit data
-│   ├── [ 725]  rx-vocab-multi.txt % medication codes vocabulary in multi-visit data
-│   ├── [2.6K]  rx-vocab.txt % medication codes vocabulary in all data
-│   ├── [6.2K]  test-id.txt % test data ids
-│   └── [ 23K]  train-id.txt % train data ids
-└── [4.0K]  saved/
-    └── [4.0K]  GBert-predict/ % model files to reproduce our result
-        ├── [ 371]  bert_config.json 
-        └── [ 12M]  pytorch_model.bin
+├── code/
+│   ├── bert_models.py % transformer models
+│   ├── build_tree.py % build ontology
+│   ├── config.py % hyperparameters for G-Bert
+│   ├── graph_models.py % GAT models
+│   ├── __init__.py
+│   ├── predictive_models.py % G-Bert models
+│   ├── run_alternative.sh % script to train G-Bert
+│   ├── run_gbert.py % fine tune G-Bert
+│   ├── run_gbert_side.py
+│   ├── run_pretraining.py % pre-train G-Bert
+│   ├── run_tsne.py # output % save embedding for tsne visualization
+│   └── utils.py
+├── data/
+│   ├── data-multi-side.pkl 
+│   ├── data-multi-visit.pkl % patients data with multi-visit
+│   ├── data-single-visit.pkl % patients data with singe-visit
+│   ├── dx-vocab-multi.txt % diagnosis codes vocabulary in multi-visit data
+│   ├── dx-vocab.txt % diagnosis codes vocabulary in all data
+│   ├── eval-id.txt % validation data ids
+│   ├── px-vocab-multi.txt % procedure codes vocabulary in multi-visit data
+│   ├── rx-vocab-multi.txt % medication codes vocabulary in multi-visit data
+│   ├── rx-vocab.txt % medication codes vocabulary in all data
+│   ├── test-id.txt % test data ids
+│   └── train-id.txt % train data ids
+└── saved/
+    ├── GBert-predict/ % model files to reproduce our result
+    │   ├── bert_config.json 
+    │   └── pytorch_model.bin
+    └── GBert-pretraining/ % model files to fine tune with multivisit data using pretrained model
+        ├── bert_config.json 
+        └── pytorch_model.bin
 ```
 ## Dataset Description
 For pre-training and fine-tuning G-Bert, we are using the MIMIC-III synthetic data (pre-processed pickle files) made available in the git
@@ -68,16 +69,18 @@ repository [G-Bert Repo](https://github.com/jshang123/G-Bert). The statistics of
 To validate the performance of G-Bert, you can run the following script since we have provided the trained model binary file and well-preprocessed data.
 ```bash
 cd code/
-# G-Bert Model using pretrained model and graph
+
+# G-Bert Trained Model to reproduce our results
+python run_gbert.py --model_name GBert-predict-n --use_pretrain --pretrain_dir ../saved/GBert-predict --num_train_epochs 5 --do_train --do_test --graph
+
+# G-Bert Model using pretrained model and fine tuning with multivisit data
 python run_gbert.py --model_name GBert-predict-n --use_pretrain --pretrain_dir ../saved/GBert-pretraining --num_train_epochs 5 --do_train --do_test --graph
-# G-Bert Model without using pretrained model and graph
-python run_gbert.py --model_name GBert-predict-p-g-n --num_train_epochs 5 --do_train --do_test
-# G-Bert Model without using pretrained model but using graph
-python run_gbert.py --model_name GBert-predict-p-n --num_train_epochs 5 --do_train --do_test --graph
-# G-Bert Model using pretrained model and not using graph
-python run_gbert.py --model_name GBert-predict-g-n --use_pretrain --pretrain_dir ../saved/GBert-predict --num_train_epochs 5 --do_train --do_test
 ```
 ## Result Comparison
+Below is the comparison of results between our reproduction study results and results published by the authors.
+
+![image](https://user-images.githubusercontent.com/55331726/236712082-370b11bf-f858-407b-9b2f-652f289224c0.png)
+
 
 ## Citation 
 
@@ -108,8 +111,7 @@ Link to original paper repo:
 
 ## Acknowledgement
 Many thanks to the open source repositories and libraries to speed up our coding progress.
-- [GAMENet](https://github.com/sjy1203/GAMENet)
-- [Bert_HuggingFace](https://github.com/huggingface/pytorch-pretrained-BERT)
+
 - [pytorch_geometric](https://github.com/rusty1s/pytorch_geometric)
 
 
